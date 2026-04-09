@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=59.6", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "duckling-wrapper"
+version = "0.1.0"
+description = "Python wrapper around Duckling's HTTP API with optional local server management."
+readme = "src/duckling-wrapper/README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    {name = "Aaditya"},
+]
+keywords = ["duckling", "nlp", "datetime", "parser"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build>=1.2.2",
+    "pytest>=8.0.0",
+    "setuptools>=59.6",
+    "twine>=5.1.1",
+    "wheel",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src/duckling-wrapper/src"}
+
+[tool.setuptools.packages.find]
+where = ["src/duckling-wrapper/src"]
+
+[tool.pytest.ini_options]
+testpaths = ["src/duckling-wrapper/tests"]
