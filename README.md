@@ -2,7 +2,7 @@
 
 This workspace contains the Duckling Python wrapper in:
 
-- `src/duckling-wrapper`
+- `duckling-wrapper`
 
 That directory is the single source of truth for:
 
@@ -15,9 +15,9 @@ That directory is the single source of truth for:
 Start there:
 
 ```bash
-cd src/duckling-wrapper
+cd duckling-wrapper
 ```
 
 See the package README for the full workflow:
 
-- [src/duckling-wrapper/README.md](src/duckling-wrapper/README.md)
+- [duckling-wrapper/README.md](duckling-wrapper/README.md)

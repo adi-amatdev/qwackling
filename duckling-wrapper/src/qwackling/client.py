@@ -14,6 +14,81 @@ import requests
 
 _UNSET = object()
 
+_CONFIG_HELP: dict[str, dict[str, Any]] = {
+    "host": {
+        "default": "127.0.0.1",
+        "type": "str",
+        "applies_to": ["parse", "start_server"],
+        "description": "Host where Duckling is reachable over HTTP.",
+    },
+    "port": {
+        "default": 8000,
+        "type": "int",
+        "applies_to": ["parse", "start_server"],
+        "description": "Port where Duckling listens and where a managed local process will be started.",
+    },
+    "stack_path": {
+        "default": "stack",
+        "type": "str",
+        "applies_to": ["start_server"],
+        "description": "Executable name or absolute path for the Haskell stack command.",
+    },
+    "locale": {
+        "default": "en_US",
+        "type": "str",
+        "applies_to": ["parse"],
+        "description": "Default locale sent with each parse request.",
+    },
+    "lang": {
+        "default": None,
+        "type": "str | None",
+        "applies_to": ["parse"],
+        "description": "Optional explicit language sent to Duckling when set.",
+    },
+    "dims": {
+        "default": None,
+        "type": "list[str] | None",
+        "applies_to": ["parse"],
+        "description": "Optional Duckling dimensions list such as ['time']; omitted when None.",
+    },
+    "latent": {
+        "default": False,
+        "type": "bool",
+        "applies_to": ["parse"],
+        "description": "Whether latent Duckling results should be included.",
+    },
+    "tz": {
+        "default": None,
+        "type": "str | None",
+        "applies_to": ["parse"],
+        "description": "Optional IANA timezone such as UTC or Asia/Kolkata.",
+    },
+    "reftime": {
+        "default": None,
+        "type": "int | None",
+        "applies_to": ["parse"],
+        "description": "Optional Unix epoch milliseconds reference time used for relative expressions.",
+    },
+    "request_timeout": {
+        "default": 10.0,
+        "type": "float",
+        "applies_to": ["parse", "is_server_ready"],
+        "description": "Timeout in seconds for HTTP requests to Duckling.",
+    },
+    "startup_retries": {
+        "default": 30,
+        "type": "int",
+        "applies_to": ["start_server"],
+        "description": "How many readiness checks to run before managed startup fails.",
+    },
+    "startup_wait_seconds": {
+        "default": 1.0,
+        "type": "float",
+        "applies_to": ["start_server"],
+        "description": "Sleep interval in seconds between readiness checks during managed startup.",
+    },
+}
+
 
 @dataclass(slots=True)
 class DucklingDefaults:
@@ -106,6 +181,22 @@ class DucklingWrapper:
             "port": self.port,
             "stack_path": self.stack_path,
         }
+
+    @staticmethod
+    def get_config_help() -> dict[str, dict[str, Any]]:
+        """Return user-facing metadata that explains each constructor and config field."""
+        return {name: dict(details) for name, details in _CONFIG_HELP.items()}
+
+    def describe_config(self) -> dict[str, dict[str, Any]]:
+        """Return help metadata plus the wrapper's current values."""
+        current = self.get_config()
+        described: dict[str, dict[str, Any]] = {}
+        for name, details in self.get_config_help().items():
+            described[name] = {
+                **details,
+                "current": current.get(name),
+            }
+        return described
 
     def start_server(self, duckling_dir: str) -> None:
         """Start a local Duckling server from a Duckling source checkout."""

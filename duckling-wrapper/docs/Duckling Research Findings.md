@@ -31,7 +31,8 @@ Duckling is a Haskell library by Meta (formerly Facebook) for parsing text into 
    - Wrapper-level defaults are stored through `config()`.
    - Per-call overrides remain available in `parse()`.
 4. **Project layout**:
-   - Python package code is under `src/duckling_wrapper/`
+   - Python package code is now under `src/qwackling/`
+   - A small `src/duckling_wrapper/` compatibility alias can still re-export the public API.
    - Unit tests are under `tests/`
    - Docs are under `docs/`
    - Helper commands are in `scripts/manage_wrapper.sh`

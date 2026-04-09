@@ -244,11 +244,10 @@ wheels = [
 ]
 
 [[package]]
-name = "duckling-wrapper"
+name = "qwackling"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "pytest" },
     { name = "requests" },
 ]
 
@@ -264,7 +263,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "build", marker = "extra == 'dev'", specifier = ">=1.2.2" },
-    { name = "pytest", specifier = ">=9.0.3" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
     { name = "requests", specifier = ">=2.31.0" },
     { name = "setuptools", marker = "extra == 'dev'", specifier = ">=59.6" },

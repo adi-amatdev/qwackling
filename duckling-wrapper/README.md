@@ -1,6 +1,6 @@
-# Duckling Wrapper
+# Qwackling
 
-`duckling-wrapper` is a Python client for Duckling's HTTP API.
+`qwackling` is a Python client for Duckling's HTTP API.
 
 The most important thing to understand is this:
 
@@ -20,7 +20,7 @@ This README focuses on:
 
 If you want API-level usage details for the wrapper itself, read:
 
-- [`docs/Wrapper Usage.md`](docs/Wrapper%20Usage.md)
+- [`@docs/wrapper usage.md`](docs/wrapper%20usage.md)
 
 ## What This Project Actually Is
 
@@ -48,7 +48,7 @@ In other words, this package is a wrapper around Duckling, not a replacement for
 Your Python app
     |
     v
-duckling-wrapper
+qwackling
     |
     v
 HTTP POST /parse
@@ -74,7 +74,8 @@ python -m build --no-isolation
 
 the generated artifacts in `dist/` contain the Python package only:
 
-- `duckling_wrapper`
+- `qwackling`
+- `duckling_wrapper` compatibility aliases
 - packaging metadata
 - Python dependency declarations such as `requests`
 
@@ -85,7 +86,7 @@ They do not contain:
 - the Haskell `stack` toolchain
 - a prebuilt embedded parser binary
 
-That behavior comes directly from `pyproject.toml`, which packages the Python code under `src/duckling_wrapper/`.
+That behavior comes directly from `pyproject.toml`, which packages the Python code under `src/qwackling/` and also ships a small `duckling_wrapper` compatibility alias.
 
 ## What `start_server(...)` Really Does
 
@@ -121,7 +122,7 @@ Use this when:
 Example:
 
 ```python
-from duckling_wrapper import DucklingWrapper
+from qwackling import DucklingWrapper
 
 wrapper = DucklingWrapper(host="127.0.0.1", port=8000)
 results = wrapper.parse("tomorrow at 8pm")
@@ -141,7 +142,7 @@ Use this when:
 Example:
 
 ```python
-from duckling_wrapper import DucklingWrapper
+from qwackling import DucklingWrapper
 
 with DucklingWrapper(port=8000) as wrapper:
     wrapper.start_server("./duckling")
@@ -215,7 +216,7 @@ sudo docker run -p 8000:8000 rasa/duckling
 ### Call an already-running Duckling service
 
 ```python
-from duckling_wrapper import DucklingWrapper
+from qwackling import DucklingWrapper
 
 wrapper = DucklingWrapper(host="127.0.0.1", port=8000)
 print(wrapper.parse("tomorrow at 8pm"))
@@ -224,16 +225,16 @@ print(wrapper.parse("tomorrow at 8pm"))
 ### Start a local Duckling checkout from Python
 
 ```python
-from duckling_wrapper import DucklingWrapper
+from qwackling import DucklingWrapper
 
 with DucklingWrapper(port=8000) as wrapper:
     wrapper.start_server("./duckling")
     print(wrapper.parse("tomorrow at 8pm"))
 ```
 
-For deeper wrapper API usage, parameter meanings, and more examples, see:
+For deeper wrapper API usage, parameter meanings, config helpers, and more examples, see:
 
-- [`docs/Wrapper Usage.md`](docs/Wrapper%20Usage.md)
+- [`@docs/wrapper usage.md`](docs/wrapper%20usage.md)
 
 ## Configuration
 
@@ -243,7 +244,7 @@ The wrapper lets you set stable defaults once and then reuse them for future cal
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from duckling_wrapper import DucklingWrapper, to_epoch_millis
+from qwackling import DucklingWrapper, to_epoch_millis
 
 wrapper = DucklingWrapper().config(
     locale="en_US",
@@ -279,7 +280,7 @@ Notes:
 
 If your main project needs natural-language date/time parsing, treat Duckling and this wrapper as two different dependencies:
 
-1. your Python app dependency: `duckling-wrapper`
+1. your Python app dependency: `qwackling`
 2. your runtime parser service: Duckling
 
 ### Recommended production integration
@@ -296,7 +297,7 @@ Example:
 ```python
 import os
 
-from duckling_wrapper import DucklingWrapper
+from qwackling import DucklingWrapper
 
 
 duckling = DucklingWrapper(
@@ -324,7 +325,7 @@ Why this is usually the best choice:
 
 If your main project is a Python app or API service, a good setup is usually:
 
-1. add `duckling-wrapper` as a Python dependency
+1. add `qwackling` as a Python dependency
 2. run Duckling separately as infrastructure
 3. keep Duckling host and port in config or environment variables
 4. create one wrapper instance at app startup
@@ -357,7 +358,7 @@ For integration tests:
 
 If you adopt this package in another repo, document it in these terms:
 
-- "We use `duckling-wrapper` as the Python client."
+- "We use `qwackling` as the Python client."
 - "We run Duckling as a separate service."
 - "The Python dependency does not include the Duckling executable."
 
@@ -368,7 +369,7 @@ That one clarification prevents most setup confusion.
 If someone does this:
 
 ```bash
-pip install duckling-wrapper
+pip install qwackling
 python app.py
 ```
 
@@ -395,7 +396,8 @@ If you are developing this wrapper package itself, think of the work in three se
 
 The Python package source lives under:
 
-- `src/duckling_wrapper/`
+- `src/qwackling/`
+- `src/duckling_wrapper/` for the compatibility alias
 
 That is the code that gets built into the Python distribution.
 
@@ -431,7 +433,7 @@ uv sync --extra dev
 
 A practical flow for wrapper development is:
 
-1. edit code under `src/duckling_wrapper/`
+1. edit code under `src/qwackling/`
 2. run unit tests
 3. if needed, build Duckling locally for manual validation
 4. build the Python package
@@ -454,8 +456,8 @@ Or:
 Artifacts are written to `dist/`, for example:
 
 ```text
-dist/duckling_wrapper-0.1.0-py3-none-any.whl
-dist/duckling_wrapper-0.1.0.tar.gz
+dist/qwackling-0.1.1-py3-none-any.whl
+dist/qwackling-0.1.1.tar.gz
 ```
 
 ### What the build output contains
@@ -509,26 +511,26 @@ If you want end-to-end confidence, run an integration flow against a real Duckli
 With `uv`:
 
 ```bash
-uv add /absolute/path/to/src/duckling-wrapper
+uv add /absolute/path/to/qwackling
 ```
 
 With `pip`:
 
 ```bash
-pip install /absolute/path/to/src/duckling-wrapper
+pip install /absolute/path/to/qwackling
 ```
 
 ### Install from a built wheel
 
 ```bash
 python -m build --no-isolation
-pip install /absolute/path/to/src/duckling-wrapper/dist/duckling_wrapper-0.1.0-py3-none-any.whl
+pip install /absolute/path/to/qwackling/dist/qwackling-0.1.1-py3-none-any.whl
 ```
 
 ### Editable install while actively developing the wrapper
 
 ```bash
-pip install -e /absolute/path/to/src/duckling-wrapper
+pip install -e /absolute/path/to/qwackling
 ```
 
 This is the best option when your main project and the wrapper are evolving together locally.
@@ -556,7 +558,7 @@ python -m twine upload --repository testpypi dist/*
 Verify installation:
 
 ```bash
-pip install --index-url https://test.pypi.org/simple/ duckling-wrapper
+pip install --index-url https://test.pypi.org/simple/ qwackling
 ```
 
 Publish to PyPI:
@@ -582,7 +584,7 @@ python -m twine upload dist/*
 
 If you only remember four things, remember these:
 
-1. `duckling-wrapper` is a Python client, not the parser itself.
+1. `qwackling` is a Python client, not the parser itself.
 2. `python -m build` packages only the Python wrapper.
 3. Duckling must exist as a separate running service or local checkout.
 4. For a main production app, run Duckling separately and use this package as the client.

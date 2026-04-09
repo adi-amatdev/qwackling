@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 import requests
 
-from duckling_wrapper import DucklingWrapper, to_epoch_millis
+from qwackling import DucklingWrapper, to_epoch_millis
 
 
 class DummyResponse:
@@ -101,6 +101,25 @@ def test_build_payload_omits_unset_optional_fields():
     }
 
 
+def test_config_help_exposes_meaningful_metadata():
+    help_text = DucklingWrapper.get_config_help()
+
+    assert help_text["tz"]["type"] == "str | None"
+    assert "timezone" in help_text["tz"]["description"].lower()
+    assert help_text["host"]["default"] == "127.0.0.1"
+
+
+def test_describe_config_includes_current_values():
+    wrapper = DucklingWrapper(host="duckling", port=9000).config(tz="UTC", dims=["time"])
+
+    described = wrapper.describe_config()
+
+    assert described["host"]["current"] == "duckling"
+    assert described["port"]["current"] == 9000
+    assert described["tz"]["current"] == "UTC"
+    assert described["dims"]["current"] == ["time"]
+
+
 def test_start_server_sets_port_and_waits_for_healthcheck():
     wrapper = DucklingWrapper(port=8123).config(
         request_timeout=2.0,
@@ -111,9 +130,9 @@ def test_start_server_sets_port_and_waits_for_healthcheck():
     process.poll.return_value = None
     process.pid = 4242
 
-    with patch("duckling_wrapper.client.subprocess.Popen", return_value=process) as popen:
+    with patch("qwackling.client.subprocess.Popen", return_value=process) as popen:
         with patch.object(wrapper, "is_server_ready", side_effect=[False, True]) as ready:
-            with patch("duckling_wrapper.client.time.sleep") as sleep:
+            with patch("qwackling.client.time.sleep") as sleep:
                 wrapper.start_server("./duckling")
 
     popen.assert_called_once()
@@ -131,10 +150,10 @@ def test_start_server_raises_if_healthcheck_never_passes():
     process.poll.return_value = None
     process.pid = 4242
 
-    with patch("duckling_wrapper.client.subprocess.Popen", return_value=process):
+    with patch("qwackling.client.subprocess.Popen", return_value=process):
         with patch.object(wrapper, "is_server_ready", return_value=False):
             with patch.object(wrapper, "stop_server") as stop_server:
-                with patch("duckling_wrapper.client.time.sleep"):
+                with patch("qwackling.client.time.sleep"):
                     with pytest.raises(RuntimeError, match="failed to start"):
                         wrapper.start_server("./duckling")
 

@@ -25,11 +25,13 @@ The public pieces are:
 - `DucklingWrapper`
 - `DucklingDefaults`
 - `to_epoch_millis(...)`
+- `DucklingWrapper.get_config_help()`
+- `DucklingWrapper.describe_config()`
 
 ## Constructor
 
 ```python
-from duckling_wrapper import DucklingWrapper
+from qwackling import DucklingWrapper
 
 wrapper = DucklingWrapper(
     host="127.0.0.1",
@@ -113,7 +115,7 @@ Useful for:
 `DucklingDefaults` stores default behavior for future parse calls and for startup checks.
 
 ```python
-from duckling_wrapper import DucklingDefaults, DucklingWrapper
+from qwackling import DucklingDefaults, DucklingWrapper
 
 defaults = DucklingDefaults(
     locale="en_US",
@@ -259,6 +261,46 @@ wrapper.config(tz=None, dims=None)
 ```
 
 After that, `tz` and `dims` are no longer sent by default.
+
+## Config helpers
+
+If you want users to inspect config meanings from Python instead of reading docs manually, use these helpers.
+
+### `DucklingWrapper.get_config_help()`
+
+Returns metadata for every constructor/config field, including:
+
+- expected type
+- default value
+- which wrapper operation it affects
+- a user-facing description
+
+Example:
+
+```python
+from qwackling import DucklingWrapper
+
+help_text = DucklingWrapper.get_config_help()
+print(help_text["tz"])
+```
+
+### `DucklingWrapper.describe_config()`
+
+Returns the same metadata plus the wrapper's current values.
+
+Example:
+
+```python
+from qwackling import DucklingWrapper
+
+wrapper = DucklingWrapper(host="duckling", port=9000).config(
+    tz="UTC",
+    dims=["time"],
+)
+
+print(wrapper.describe_config()["tz"])
+print(wrapper.describe_config()["host"])
+```
 
 ## `parse(...)`
 
@@ -427,7 +469,7 @@ Use `to_epoch_millis(...)` when you want a safe way to create `reftime`.
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from duckling_wrapper import to_epoch_millis
+from qwackling import to_epoch_millis
 
 reftime = to_epoch_millis(
     datetime(2026, 4, 8, 10, 0, tzinfo=ZoneInfo("Asia/Kolkata"))
@@ -445,7 +487,7 @@ If it is naive, the helper raises `ValueError`.
 ### 1. Simplest client usage
 
 ```python
-from duckling_wrapper import DucklingWrapper
+from qwackling import DucklingWrapper
 
 wrapper = DucklingWrapper(host="127.0.0.1", port=8000)
 print(wrapper.parse("tomorrow at 8pm"))
@@ -456,7 +498,7 @@ Use this when Duckling is already running elsewhere.
 ### 2. Stable defaults for many calls
 
 ```python
-from duckling_wrapper import DucklingWrapper
+from qwackling import DucklingWrapper
 
 wrapper = DucklingWrapper().config(
     locale="en_US",
@@ -489,7 +531,7 @@ Use this when most requests share defaults, but one request needs special handli
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from duckling_wrapper import DucklingWrapper, to_epoch_millis
+from qwackling import DucklingWrapper, to_epoch_millis
 
 wrapper = DucklingWrapper().config(
     locale="en_US",
@@ -508,7 +550,7 @@ Use this in tests so relative date results do not drift over time.
 ### 5. Local development with managed startup
 
 ```python
-from duckling_wrapper import DucklingWrapper
+from qwackling import DucklingWrapper
 
 with DucklingWrapper(port=8000) as wrapper:
     wrapper.start_server("./duckling")

@@ -66,8 +66,10 @@ run_tests() {
 }
 
 build_dist() {
-  if "${PYTHON_BIN}" -c "import build.__main__" >/dev/null 2>&1; then
-    "${PYTHON_BIN}" -m build "${REPO_ROOT}"
+  rm -rf "${REPO_ROOT}/build" "${REPO_ROOT}/dist"
+
+  if "${PYTHON_BIN}" -c "import build.__main__, setuptools, wheel" >/dev/null 2>&1; then
+    "${PYTHON_BIN}" -m build --no-isolation "${REPO_ROOT}"
   elif "${PYTHON_BIN}" -c "import setuptools, wheel" >/dev/null 2>&1 && [ -f "${REPO_ROOT}/setup.py" ]; then
     "${PYTHON_BIN}" setup.py sdist bdist_wheel
   elif "${SYSTEM_PYTHON_BIN}" -c "import setuptools, wheel" >/dev/null 2>&1 && [ -f "${REPO_ROOT}/setup.py" ]; then
@@ -79,6 +81,7 @@ build_dist() {
     echo "Run ./scripts/manage_wrapper.sh install-dev first." >&2
     exit 1
   fi
+
 }
 
 bootstrap_all() {
