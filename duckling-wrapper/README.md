@@ -75,7 +75,6 @@ python -m build --no-isolation
 the generated artifacts in `dist/` contain the Python package only:
 
 - `qwackling`
-- `duckling_wrapper` compatibility aliases
 - packaging metadata
 - Python dependency declarations such as `requests`
 
@@ -86,7 +85,7 @@ They do not contain:
 - the Haskell `stack` toolchain
 - a prebuilt embedded parser binary
 
-That behavior comes directly from `pyproject.toml`, which packages the Python code under `src/qwackling/` and also ships a small `duckling_wrapper` compatibility alias.
+That behavior comes directly from `pyproject.toml`, which maps the `qwackling` package to the files kept directly under `src/`.
 
 ## What `start_server(...)` Really Does
 
@@ -396,8 +395,7 @@ If you are developing this wrapper package itself, think of the work in three se
 
 The Python package source lives under:
 
-- `src/qwackling/`
-- `src/duckling_wrapper/` for the compatibility alias
+- `src/`
 
 That is the code that gets built into the Python distribution.
 
@@ -433,7 +431,7 @@ uv sync --extra dev
 
 A practical flow for wrapper development is:
 
-1. edit code under `src/qwackling/`
+1. edit code under `src/`
 2. run unit tests
 3. if needed, build Duckling locally for manual validation
 4. build the Python package

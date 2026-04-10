@@ -53,11 +53,16 @@ install_dev() {
 
 run_tests() {
   if "${PYTHON_BIN}" -m pytest --version >/dev/null 2>&1; then
-    PYTHONPATH="${PACKAGE_SRC_DIR}${PYTHONPATH:+:${PYTHONPATH}}" \
+    (
+      cd "${PACKAGE_DIR}"
       "${PYTHON_BIN}" -m pytest -c "${REPO_ROOT}/pyproject.toml" "${PACKAGE_DIR}/tests"
+    )
   elif have_uv; then
-    PYTHONPATH="${PACKAGE_SRC_DIR}${PYTHONPATH:+:${PYTHONPATH}}" \
-      uv run --project "${REPO_ROOT}" python -m pytest -c "${REPO_ROOT}/pyproject.toml" "${PACKAGE_DIR}/tests"
+    (
+      cd "${PACKAGE_DIR}"
+      UV_CACHE_DIR="${UV_CACHE_DIR:-/tmp/uv-cache}" \
+        uv run --project "${REPO_ROOT}" python -m pytest -c "${REPO_ROOT}/pyproject.toml" "${PACKAGE_DIR}/tests"
+    )
   else
     echo "pytest is not installed for ${PYTHON_BIN}." >&2
     echo "Run ./scripts/manage_wrapper.sh install-dev first." >&2
