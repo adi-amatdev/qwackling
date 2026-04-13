@@ -20,7 +20,7 @@ This README focuses on:
 
 If you want API-level usage details for the wrapper itself, read:
 
-- [`@docs/wrapper usage.md`](docs/wrapper%20usage.md)
+- [`@docs/wrapper usage.md`](docs/wrapper_usage.md)
 
 ## What This Project Actually Is
 
